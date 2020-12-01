@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'com.palantir.docker' version "0.22.1"
+}
+
+group = 'sh.tiago'
+version = '0.0.1-SNAPSHOT'
+
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+subprojects {
+    sourceCompatibility = '11'
+
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+    apply plugin: 'com.palantir.docker'
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.4.0")
+            mavenBom('com.amazonaws:aws-xray-recorder-sdk-bom:2.8.0')
+        }
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'com.amazonaws:aws-xray-recorder-sdk-core:2.8.0'
+        implementation "com.amazonaws:aws-xray-recorder-sdk-aws-sdk:2.8.0"
+        implementation "com.amazonaws:aws-xray-recorder-sdk-aws-sdk-instrumentor:2.8.0"
+        implementation "com.amazonaws:aws-xray-recorder-sdk-apache-http:2.8.0"
+        implementation 'com.amazonaws:aws-xray-recorder-sdk-spring:2.8.0'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}

@@ -1,0 +1,2 @@
+rootProject.name = 'springboot_xray'
+include('frontend_service', 'persistence_service', 'booking_services:manage_service', 'booking_services:search_service')

@@ -1,0 +1,9 @@
+plugins {
+  id "org.springframework.boot" version "2.4.0"
+}
+
+docker {
+  name 'booking/frontend_service:latest'
+  files jar.archiveFile.get()
+  buildArgs([JAR_FILE: jar.archiveFileName.get()])
+}

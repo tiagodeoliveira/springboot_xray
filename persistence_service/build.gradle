@@ -1,0 +1,17 @@
+plugins {
+  id "org.springframework.boot" version "2.4.0"
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'com.amazonaws:aws-xray-recorder-sdk-sql-mysql:2.8.0'
+  implementation 'org.apache.tomcat:tomcat-jdbc'
+  runtimeOnly 'mysql:mysql-connector-java'
+}
+
+docker {
+  name 'booking/persistence_service:latest'
+  files jar.archiveFile.get()
+  buildArgs([JAR_FILE: jar.archiveFileName.get()])
+}
