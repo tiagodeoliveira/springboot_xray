@@ -2,7 +2,7 @@
 build
 bin
 .idea
-xray-daemon.env
+aws-credentials.env
 .classpath
 .project
 .settings

@@ -14,11 +14,13 @@ public class Message {
         this.message = message;
     }
 
-
-
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
     private String message;
+
+    public Integer getId() {
+        return this.id;
+    }
 }

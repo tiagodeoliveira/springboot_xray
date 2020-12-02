@@ -6,7 +6,7 @@ services:
     - "2000:2000/tcp"
     - "2000:2000/udp"
     env_file:
-      - xray-daemon.env
+      - aws-credentials.env
   frontend:
     image: booking/frontend_service
     ports:
@@ -44,6 +44,8 @@ services:
       - xray
     environment:
       - AWS_XRAY_DAEMON_ADDRESS=xray:2000
+    env_file:
+      - aws-credentials.env
   mysql:
     image: mysql:5.7
     volumes:
