@@ -5,6 +5,7 @@ import com.amazonaws.xray.AWSXRayRecorder;
 import com.amazonaws.xray.AWSXRayRecorderBuilder;
 import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
 import com.amazonaws.xray.spring.aop.XRayEnabled;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -21,13 +22,20 @@ import java.io.IOException;
 @RestController
 public class AdmissionController {
 
+    private static final int REQUEST_TIMEOUT_IN_SECS = 2;
     private final ValidatorService validatorService;
     private final CloseableHttpClient httpclient;
     private final AWSXRayRecorder awsxRayRecorder;
 
     public AdmissionController(ValidatorService validatorService) {
         this.validatorService = validatorService;
-        this.httpclient = HttpClientBuilder.create().build();
+
+        final RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(REQUEST_TIMEOUT_IN_SECS * 1000)
+                .setConnectionRequestTimeout(REQUEST_TIMEOUT_IN_SECS * 1000)
+                .setSocketTimeout(REQUEST_TIMEOUT_IN_SECS * 1000).build();
+
+        this.httpclient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
         this.awsxRayRecorder = AWSXRayRecorderBuilder.standard().build();
     }
 
