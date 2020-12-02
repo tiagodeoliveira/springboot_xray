@@ -28,18 +28,28 @@ public class PersistenceController {
     public PersistenceController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
         this.dynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.EU_CENTRAL_1)
+                .withRegion(Regions.fromName(System.getenv("AWS_REGION")))
                 .withRequestHandlers(new TracingHandler(AWSXRay.getGlobalRecorder()))
                 .build();
     }
     
     @PostMapping("/message")
     public Boolean persistMessage(@RequestBody String message) {
+        final Message persistedMessage = this.persistOnMySQL(message);
+        this.persistOnDynamoDB(message, persistedMessage.getId().toString());
+        return true;
+    }
+
+    private Message persistOnMySQL(final String message) {
         LOGGER.info("persisting message on DB!");
         final Message persistedMessage = this.messageRepository.save(new Message(message));
         LOGGER.info("message persisted!");
+        return persistedMessage;
+    }
+
+    private Boolean persistOnDynamoDB(final String message, final String id) {
         final Map<String, AttributeValue> dynamoAttributes = new HashMap<>();
-        dynamoAttributes.put("id", new AttributeValue().withS(String.valueOf(persistedMessage.getId())));
+        dynamoAttributes.put("id", new AttributeValue().withS(id));
         dynamoAttributes.put("message", new AttributeValue().withS(message));
         this.dynamoDB.putItem("xray_messages", dynamoAttributes);
         return true;

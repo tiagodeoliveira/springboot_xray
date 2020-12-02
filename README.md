@@ -31,7 +31,7 @@ The additional components needed are:
 * [MySQL](https://hub.docker.com/_/mysql)
 * [AWS X-Ray Daemon](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html), which forwards the traces sent by our springboot app to AWS
 
-Before starting the stack, the X-Ray Daemon container expects the credentials to be added on the file `xray-daemon.env`, with the following content:
+Before starting the stack, the X-Ray Daemon container expects the credentials to be added on the file `aws-credentials.env`, with the following content:
 ```text
 AWS_REGION=
 AWS_ACCESS_KEY_ID=
