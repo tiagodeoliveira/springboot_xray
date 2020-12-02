@@ -58,6 +58,7 @@ public class SearchController {
             try {
                 final CloseableHttpResponse httpResponse = this.httpclient.execute(new HttpGet("http://manage:8081/reservations"));
                 IOUtils.toString(httpResponse.getEntity().getContent());
+                httpResponse.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -73,6 +74,7 @@ public class SearchController {
                 final HttpPost httpPost = new HttpPost("http://persistence:8083/message");
                 httpPost.setEntity(new StringEntity(message));
                 final CloseableHttpResponse httpResponse = this.httpclient.execute(httpPost);
+                httpResponse.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

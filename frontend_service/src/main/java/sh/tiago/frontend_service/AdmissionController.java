@@ -22,7 +22,7 @@ import java.io.IOException;
 @RestController
 public class AdmissionController {
 
-    private static final int REQUEST_TIMEOUT_IN_SECS = 2;
+    private static final int REQUEST_TIMEOUT_IN_SECS = 5;
     private final ValidatorService validatorService;
     private final CloseableHttpClient httpclient;
     private final AWSXRayRecorder awsxRayRecorder;
@@ -43,7 +43,9 @@ public class AdmissionController {
     public ResponseEntity searchSlots(@RequestHeader(name = "x-someheader") String authHeader) throws IOException {
         this.validatorService.validateRequest(authHeader);
         final CloseableHttpResponse httpResponse = this.httpclient.execute(new HttpGet("http://search:8082/reservations/search"));
-        return createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        final ResponseEntity response = createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        httpResponse.close();
+        return response;
     }
 
     @PostMapping("/reservations")
@@ -52,21 +54,27 @@ public class AdmissionController {
         final HttpPost httpPost = new HttpPost("http://manage:8081/reservations");
         httpPost.setEntity(new StringEntity(body));
         final CloseableHttpResponse httpResponse = this.httpclient.execute(httpPost);
-        return createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        final ResponseEntity response = createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        httpResponse.close();
+        return response;
     }
 
     @GetMapping("/reservations")
     public ResponseEntity listReservations(@RequestHeader(name = "x-someheader") String authHeader) throws IOException {
         this.validatorService.validateRequest(authHeader);
         final CloseableHttpResponse httpResponse = this.httpclient.execute(new HttpGet("http://manage:8081/reservations"));
-        return createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        final ResponseEntity response = createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        httpResponse.close();
+        return response;
     }
 
     @DeleteMapping("/reservations/{id}")
     public ResponseEntity deleteReservation(@RequestHeader(name = "x-someheader") String authHeader, @PathVariable("id") final String id) throws IOException {
         this.validatorService.validateRequest(authHeader);
         final CloseableHttpResponse httpResponse = this.httpclient.execute(new HttpDelete(String.format("http://manage:8081/reservations/%s", id)));
-        return createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        final ResponseEntity response = createResponse(IOUtils.toString(httpResponse.getEntity().getContent()));
+        httpResponse.close();
+        return response;
     }
 
     private ResponseEntity createResponse(final Object content) {
